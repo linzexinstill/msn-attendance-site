@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSN打卡 - 智能考勤助手 | 一键打卡，轻松管理</title>
+    <meta name="description" content="MSN打卡是一款简洁高效的智能考勤助手，支持一键打卡、AI助手、月报年报、数据导出等功能。售价仅1元，免费试用3天。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #5B6CF0;
+            --primary-light: #8B9CF7;
+            --primary-dark: #4A5BD9;
+            --success: #34D399;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --text-primary: #1A1D2E;
+            --text-secondary: #6B7085;
+            --text-muted: #9CA0B5;
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F9FB;
+            --bg-gradient: linear-gradient(135deg, #F0F1FE 0%, #E8E9FF 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+            background: var(--bg-primary);
+            overflow-x: hidden;
+        }
+
+        /* ==================== Navigation ==================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .nav-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .nav-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-cta {
+            background: var(--primary);
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(91, 108, 240, 0.4);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-menu-btn span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+
+        /* ==================== Hero Section ==================== */
+        .hero {
+            padding: 140px 24px 100px;
+            background: var(--bg-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(91, 108, 240, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 560px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--primary);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+        }
+
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 48px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 8px 30px rgba(91, 108, 240, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(91, 108, 240, 0.4);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: var(--text-primary);
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+        }
+
+        .hero-stat {
+            text-align: left;
+        }
+
+        .hero-stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -1px;
+        }
+
+        .hero-stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .hero-phone {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone-mockup {
+            width: 300px;
+            height: 620px;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.15), 0 0 0 8px #1A1D2E;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #F0F1FE 0%, #F8F9FB 40%);
+            padding: 60px 20px 20px;
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 30px;
+            background: #1A1D2E;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .phone-time {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 20px;
+        }
+
+        .phone-date {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .phone-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 30px;
+            padding: 0 10px;
+        }
+
+        .phone-btn {
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .phone-btn-checkin {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        .phone-btn-checkout {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        .phone-btn-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .phone-btn-time {
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .phone-btn-hint {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 8px;
+        }
+
+        .phone-status {
+            margin-top: 20px;
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-left: 10px;
+            margin-right: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .phone-status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .phone-status-label {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .phone-status-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* ==================== Features Section ==================== */
+        .features {
+            padding: 120px 24px;
+            background: white;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 80px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(91, 108, 240, 0.1), rgba(139, 156, 247, 0.1));
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .section-desc {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 36px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 60px rgba(91, 108, 240, 0.1);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .feature-icon-blue { background: rgba(91, 108, 240, 0.1); }
+        .feature-icon-green { background: rgba(52, 211, 153, 0.1); }
+        .feature-icon-purple { background: rgba(139, 92, 246, 0.1); }
+        .feature-icon-orange { background: rgba(245, 158, 11, 0.1); }
+        .feature-icon-pink { background: rgba(236, 72, 153, 0.1); }
+        .feature-icon-cyan { background: rgba(6, 182, 212, 0.1); }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .feature-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ==================== Screenshots Section ==================== */
+        .screenshots {
+            padding: 120px 24px;
+            background: var(--bg-gradient);
+        }
+
+        .screenshots-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 60px;
+        }
+
+        .screenshot-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+
+        .screenshot-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
+        }
+
+        .screenshot-preview {
+            height: 400px;
+            background: linear-gradient(135deg, #F0F1FE, #E8E9FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+            flex-direction: column;
+        }
+
+        .phone-frame {
+            width: 100%;
+            max-width: 220px;
+            height: 340px;
+            background: #fff;
+            border-radius: 28px;
+            box-shadow: 0 8px 32px rgba(91, 108, 240, 0.15), 0 2px 8px rgba(0,0,0,0.06);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 3px solid #e8e8ee;
+        }
+
+        .phone-status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 14px;
+            font-size: 10px;
+            color: #999;
+            background: #fafafe;
+        }
+
+        .phone-notch {
+            width: 60px;
+            height: 6px;
+            background: #ddd;
+            border-radius: 3px;
+            margin: 0 auto;
+        }
+
+        .phone-body {
+            flex: 1;
+            padding: 10px 12px;
+            overflow: hidden;
+            font-size: 11px;
+            color: #333;
+        }
+
+        .mock-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .mock-time {
+            font-size: 38px;
+            font-weight: 800;
+            color: #5B6CF0;
+            letter-spacing: -1px;
+        }
+
+        .mock-date {
+            font-size: 11px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .mock-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #F0F1FE;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+
+        .mock-btn-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mock-btn-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .mock-btn-time {
+            font-size: 10px;
+            color: #999;
+        }
+
+        .mock-status-card {
+            background: linear-gradient(135deg, #5B6CF0, #8B9CF7);
+            color: white;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            margin-top: 8px;
+            font-size: 11px;
+        }
+
+        .mock-status-card strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        /* Calendar mock */
+        .mock-cal-header {
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: #5B6CF0;
+            margin-bottom: 8px;
+        }
+
+        .mock-cal-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 9px;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+
+        .mock-cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            gap: 2px;
+            font-size: 10px;
+        }
+
+        .mock-cal-day {
+            padding: 3px 0;
+            border-radius: 6px;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .mock-cal-day.green { background: #e6faed; color: #22c55e; font-weight: 600; }
+        .mock-cal-day.yellow { background: #fef9e7; color: #eab308; font-weight: 600; }
+        .mock-cal-day.red { background: #fef2f2; color: #ef4444; font-weight: 600; }
+        .mock-cal-day.today { background: #5B6CF0; color: #fff; font-weight: 700; }
+        .mock-cal-day.empty { visibility: hidden; }
+
+        .mock-legend {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 8px;
+            font-size: 9px;
+            color: #888;
+        }
+
+        .mock-legend span {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .mock-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Report mock */
+        .mock-report-title {
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: #5B6CF0;
+            margin-bottom: 10px;
+        }
+
+        .mock-ring-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .mock-ring {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: conic-gradient(#5B6CF0 0% 95%, #e8e8ee 95% 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .mock-ring-inner {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mock-ring-pct {
+            font-size: 18px;
+            font-weight: 800;
+            color: #5B6CF0;
+        }
+
+        .mock-ring-label {
+            font-size: 8px;
+            color: #999;
+        }
+
+        .mock-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .mock-stat-item {
+            background: #F0F1FE;
+            border-radius: 8px;
+            padding: 6px 8px;
+            text-align: center;
+        }
+
+        .mock-stat-val {
+            font-size: 14px;
+            font-weight: 700;
+            color: #5B6CF0;
+        }
+
+        .mock-stat-label {
+            font-size: 9px;
+            color: #888;
+        }
+
+        /* AI chat mock */
+        .mock-chat-header {
+            text-align: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: #5B6CF0;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .mock-bubble {
+            max-width: 85%;
+            padding: 8px 10px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .mock-bubble-user {
+            background: #5B6CF0;
+            color: #fff;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .mock-bubble-ai {
+            background: #F0F1FE;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .mock-chat-input {
+            margin-top: auto;
+            background: #f5f5f8;
+            border-radius: 16px;
+            padding: 7px 12px;
+            font-size: 10px;
+            color: #bbb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .screenshot-info {
+            padding: 24px;
+        }
+
+        .screenshot-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .screenshot-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* ==================== Pricing Section ==================== */
+        .pricing {
+            padding: 120px 24px;
+            background: white;
+        }
+
+        .pricing-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 32px;
+            padding: 48px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: 24px;
+            right: -32px;
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 8px 40px;
+            font-size: 13px;
+            font-weight: 600;
+            transform: rotate(45deg);
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .pricing-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .pricing-desc {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .pricing-price {
+            margin: 32px 0;
+        }
+
+        .pricing-amount {
+            font-size: 72px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -3px;
+        }
+
+        .pricing-currency {
+            font-size: 32px;
+            font-weight: 600;
+            vertical-align: super;
+            margin-right: 4px;
+        }
+
+        .pricing-period {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        .pricing-trial {
+            display: inline-block;
+            background: rgba(91, 108, 240, 0.1);
+            color: var(--primary);
+            padding: 8px 24px;
+            border-radius: 100px;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 40px 0;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            width: 24px;
+            height: 24px;
+            background: rgba(52, 211, 153, 0.1);
+            color: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .pricing-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .pricing-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(91, 108, 240, 0.4);
+        }
+
+        /* ==================== Testimonials Section ==================== */
+        .testimonials {
+            padding: 120px 24px;
+            background: var(--bg-gradient);
+        }
+
+        .testimonials-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+        }
+
+        .testimonial-stars {
+            color: var(--warning);
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .testimonial-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .testimonial-name {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .testimonial-role {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ==================== FAQ Section ==================== */
+        .faq {
+            padding: 120px 24px;
+            background: white;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .faq-item {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .faq-item.active {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+        }
+
+        .faq-question {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 28px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .faq-question:hover {
+            color: var(--primary);
+        }
+
+        .faq-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(91, 108, 240, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+            background: var(--primary);
+            color: white;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .faq-answer-inner {
+            padding: 0 28px 24px;
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+        }
+
+        /* ==================== Download Section ==================== */
+        .download {
+            padding: 120px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .download-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .download-title {
+            font-size: 48px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+        }
+
+        .download-desc {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 48px;
+        }
+
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            color: var(--text-primary);
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-btn-icon {
+            font-size: 28px;
+        }
+
+        .download-btn-text {
+            text-align: left;
+        }
+
+        .download-btn-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ==================== Footer ==================== */
+        .footer {
+            padding: 60px 24px 40px;
+            background: var(--text-primary);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .footer-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            padding-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-copyright {
+            font-size: 14px;
+        }
+
+        .footer-icp {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ==================== Responsive ==================== */
+        @media (max-width: 1024px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 60px;
+                text-align: center;
+            }
+
+            .hero-content {
+                max-width: 100%;
+            }
+
+            .hero-actions {
+                justify-content: center;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .screenshots-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero {
+                padding: 120px 24px 80px;
+            }
+
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .hero-desc {
+                font-size: 16px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .screenshots-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card {
+                padding: 32px;
+            }
+
+            .download-title {
+                font-size: 32px;
+            }
+
+            .download-buttons {
+                flex-direction: column;
+            }
+
+            .footer-top {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
+
+        /* ==================== Animations ==================== */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in-delay-1 { transition-delay: 0.1s; }
+        .fade-in-delay-2 { transition-delay: 0.2s; }
+        .fade-in-delay-3 { transition-delay: 0.3s; }
+        .fade-in-delay-4 { transition-delay: 0.4s; }
+        .fade-in-delay-5 { transition-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- ==================== Navigation ==================== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <div class="nav-logo-icon">⏰</div>
+                <span class="nav-logo-text">MSN打卡</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">功能</a></li>
+                <li><a href="#screenshots">截图</a></li>
+                <li><a href="#pricing">定价</a></li>
+                <li><a href="#faq">常见问题</a></li>
+                <li><a href="#download" class="nav-cta">免费下载</a></li>
+            </ul>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ==================== Hero Section ==================== -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="hero-badge-dot"></span>
+                    新版发布 v1.5.7
+                </div>
+                <h1 class="hero-title">
+                    让考勤变得<br>
+                    <span>简单优雅</span>
+                </h1>
+                <p class="hero-desc">
+                    MSN打卡是一款专为职场人打造的智能考勤助手。一键打卡、AI助手、月报统计、数据导出，让每一天的出勤都清晰可见。
+                </p>
+                <div class="hero-actions">
+                    <a href="#download" class="btn-primary">
+                        <span>⬇</span>
+                        免费下载
+                    </a>
+                    <a href="#features" class="btn-secondary">
+                        <span>→</span>
+                        了解更多
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">¥1</div>
+                        <div class="hero-stat-label">永久使用</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">3天</div>
+                        <div class="hero-stat-label">免费试用</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">0</div>
+                        <div class="hero-stat-label">广告打扰</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-phone">
+                <div class="phone-mockup">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="phone-time">09:00</div>
+                        <div class="phone-date">星期四 5月15日</div>
+                        <div class="phone-buttons">
+                            <div class="phone-btn phone-btn-checkin">
+                                <div class="phone-btn-label">上班</div>
+                                <div class="phone-btn-time">09:00</div>
+                                <div class="phone-btn-hint">点击打卡</div>
+                            </div>
+                            <div class="phone-btn phone-btn-checkout">
+                                <div class="phone-btn-label">下班</div>
+                                <div class="phone-btn-time">18:00</div>
+                                <div class="phone-btn-hint">点击打卡</div>
+                            </div>
+                        </div>
+                        <div class="phone-status">
+                            <div class="phone-status-row">
+                                <span class="phone-status-label">今日状态</span>
+                                <span class="phone-status-value" style="color: var(--success);">工作日</span>
+                            </div>
+                            <div class="phone-status-row">
+                                <span class="phone-status-label">连续出勤</span>
+                                <span class="phone-status-value" style="color: var(--primary);">12天</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Features Section ==================== -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="section-header fade-in">
+                <div class="section-tag">核心功能</div>
+                <h2 class="section-title">你需要的，我们都想到了</h2>
+                <p class="section-desc">从打卡到统计，从提醒到导出，MSN打卡覆盖考勤管理的方方面面</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card fade-in fade-in-delay-1">
+                    <div class="feature-icon feature-icon-blue">⏰</div>
+                    <h3 class="feature-title">一键打卡</h3>
+                    <p class="feature-desc">上班下班，一键完成。支持自定义上下班时间，迟到早退自动识别。</p>
+                </div>
+                <div class="feature-card fade-in fade-in-delay-2">
+                    <div class="feature-icon feature-icon-purple">🤖</div>
+                    <h3 class="feature-title">AI助手</h3>
+                    <p class="feature-desc">智能考勤顾问，随时回答你的考勤问题，提供数据分析和建议。</p>
+                </div>
+                <div class="feature-card fade-in fade-in-delay-3">
+                    <div class="feature-icon feature-icon-green">📊</div>
+                    <h3 class="feature-title">月报年报</h3>
+                    <p class="feature-desc">出勤率、迟到次数、加班时长，一目了然的可视化统计报告。</p>
+                </div>
+                <div class="feature-card fade-in fade-in-delay-1">
+                    <div class="feature-icon feature-icon-orange">📅</div>
+                    <h3 class="feature-title">日历视图</h3>
+                    <p class="feature-desc">直观的日历展示，支持农历显示，节假日自动识别，补卡请假一目了然。</p>
+                </div>
+                <div class="feature-card fade-in fade-in-delay-2">
+                    <div class="feature-icon feature-icon-pink">🔔</div>
+                    <h3 class="feature-title">智能提醒</h3>
+                    <p class="feature-desc">上下班提醒、每周总结推送，再也不用担心忘记打卡。</p>
+                </div>
+                <div class="feature-card fade-in fade-in-delay-3">
+                    <div class="feature-icon feature-icon-cyan">📤</div>
+                    <h3 class="feature-title">数据导出</h3>
+                    <p class="feature-desc">支持Excel、CSV、文本格式导出，方便汇报和存档。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Screenshots Section ==================== -->
+    <section class="screenshots" id="screenshots">
+        <div class="screenshots-container">
+            <div class="section-header fade-in">
+                <div class="section-tag">应用预览</div>
+                <h2 class="section-title">简洁优雅的设计</h2>
+                <p class="section-desc">Material3设计语言，紫色系主题，每一个细节都经过精心打磨</p>
+            </div>
+            <div class="screenshots-grid">
+                <div class="screenshot-card fade-in fade-in-delay-1">
+                    <div class="screenshot-preview">
+                        <div class="phone-frame">
+                            <div class="phone-status-bar"><span>9:41</span><span>WiFi  87%</span></div>
+                            <div class="phone-notch"></div>
+                            <div class="phone-body">
+                                <div class="mock-header">
+                                    <div class="mock-time">09:00</div>
+                                    <div class="mock-date">星期四  5月15日</div>
+                                </div>
+                                <div class="mock-btn">
+                                    <div class="mock-btn-left">
+                                        <div class="mock-btn-icon" style="background:#5B6CF0;color:#fff;">&#9654;</div>
+                                        <div><strong>上班</strong></div>
+                                    </div>
+                                    <div class="mock-btn-time">09:00</div>
+                                </div>
+                                <div class="mock-btn">
+                                    <div class="mock-btn-left">
+                                        <div class="mock-btn-icon" style="background:#e8e8ee;color:#999;">&#9632;</div>
+                                        <div><strong>下班</strong></div>
+                                    </div>
+                                    <div class="mock-btn-time">18:00</div>
+                                </div>
+                                <div class="mock-status-card">
+                                    <strong>今日状态: 工作日</strong>
+                                    已打卡 · 正常
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="screenshot-info">
+                        <h3 class="screenshot-title">打卡页面</h3>
+                        <p class="screenshot-desc">一键打卡，实时状态显示</p>
+                    </div>
+                </div>
+                <div class="screenshot-card fade-in fade-in-delay-2">
+                    <div class="screenshot-preview">
+                        <div class="phone-frame">
+                            <div class="phone-status-bar"><span>9:41</span><span>WiFi  87%</span></div>
+                            <div class="phone-notch"></div>
+                            <div class="phone-body">
+                                <div class="mock-cal-header">2026年5月</div>
+                                <div class="mock-cal-weekdays">
+                                    <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+                                </div>
+                                <div class="mock-cal-grid">
+                                    <span class="mock-cal-day empty"></span><span class="mock-cal-day empty"></span><span class="mock-cal-day empty"></span><span class="mock-cal-day empty"></span><span class="mock-cal-day empty"></span><span class="mock-cal-day green">1</span><span class="mock-cal-day green">2</span>
+                                    <span class="mock-cal-day green">3</span><span class="mock-cal-day green">4</span><span class="mock-cal-day green">5</span><span class="mock-cal-day green">6</span><span class="mock-cal-day green">7</span><span class="mock-cal-day yellow">8</span><span class="mock-cal-day green">9</span>
+                                    <span class="mock-cal-day green">10</span><span class="mock-cal-day green">11</span><span class="mock-cal-day green">12</span><span class="mock-cal-day green">13</span><span class="mock-cal-day green">14</span><span class="mock-cal-day today">15</span><span class="mock-cal-day">16</span>
+                                    <span class="mock-cal-day">17</span><span class="mock-cal-day red">18</span><span class="mock-cal-day">19</span><span class="mock-cal-day">20</span><span class="mock-cal-day">21</span><span class="mock-cal-day">22</span><span class="mock-cal-day">23</span>
+                                    <span class="mock-cal-day">24</span><span class="mock-cal-day">25</span><span class="mock-cal-day">26</span><span class="mock-cal-day">27</span><span class="mock-cal-day">28</span><span class="mock-cal-day">29</span><span class="mock-cal-day">30</span>
+                                    <span class="mock-cal-day">31</span>
+                                </div>
+                                <div class="mock-legend">
+                                    <span><i class="mock-dot" style="background:#22c55e;"></i> 正常</span>
+                                    <span><i class="mock-dot" style="background:#eab308;"></i> 迟到</span>
+                                    <span><i class="mock-dot" style="background:#ef4444;"></i> 缺卡</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="screenshot-info">
+                        <h3 class="screenshot-title">日历视图</h3>
+                        <p class="screenshot-desc">考勤状态，一目了然</p>
+                    </div>
+                </div>
+                <div class="screenshot-card fade-in fade-in-delay-3">
+                    <div class="screenshot-preview">
+                        <div class="phone-frame">
+                            <div class="phone-status-bar"><span>9:41</span><span>WiFi  87%</span></div>
+                            <div class="phone-notch"></div>
+                            <div class="phone-body">
+                                <div class="mock-report-title">5月考勤报告</div>
+                                <div class="mock-ring-wrap">
+                                    <div class="mock-ring">
+                                        <div class="mock-ring-inner">
+                                            <span class="mock-ring-pct">95%</span>
+                                            <span class="mock-ring-label">出勤率</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mock-stats">
+                                    <div class="mock-stat-item">
+                                        <div class="mock-stat-val">22</div>
+                                        <div class="mock-stat-label">出勤天数</div>
+                                    </div>
+                                    <div class="mock-stat-item">
+                                        <div class="mock-stat-val">1</div>
+                                        <div class="mock-stat-label">迟到次数</div>
+                                    </div>
+                                    <div class="mock-stat-item">
+                                        <div class="mock-stat-val">0</div>
+                                        <div class="mock-stat-label">早退次数</div>
+                                    </div>
+                                    <div class="mock-stat-item">
+                                        <div class="mock-stat-val">23</div>
+                                        <div class="mock-stat-label">应出勤</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="screenshot-info">
+                        <h3 class="screenshot-title">月度报告</h3>
+                        <p class="screenshot-desc">数据统计，清晰直观</p>
+                    </div>
+                </div>
+                <div class="screenshot-card fade-in fade-in-delay-4">
+                    <div class="screenshot-preview">
+                        <div class="phone-frame">
+                            <div class="phone-status-bar"><span>9:41</span><span>WiFi  87%</span></div>
+                            <div class="phone-notch"></div>
+                            <div class="phone-body" style="display:flex;flex-direction:column;">
+                                <div class="mock-chat-header">AI 考勤助手</div>
+                                <div class="mock-bubble mock-bubble-user">这个月我迟到了几次？</div>
+                                <div class="mock-bubble mock-bubble-ai">本月您共迟到<strong>1次</strong>，发生在5月8日(周四)。<br><br>建议设置提前15分钟的闹钟，并预留通勤缓冲时间~</div>
+                                <div class="mock-chat-input">输入你的问题...  &#9654;</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="screenshot-info">
+                        <h3 class="screenshot-title">AI助手</h3>
+                        <p class="screenshot-desc">智能问答，贴心顾问</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Pricing Section ==================== -->
+    <section class="pricing" id="pricing">
+        <div class="pricing-container">
+            <div class="section-header fade-in">
+                <div class="section-tag">定价方案</div>
+                <h2 class="section-title">简单透明的价格</h2>
+                <p class="section-desc">没有订阅，没有内购，一次购买，永久使用</p>
+            </div>
+            <div class="pricing-card fade-in">
+                <div class="pricing-badge">限时优惠</div>
+                <div class="pricing-header">
+                    <div class="pricing-name">MSN打卡</div>
+                    <div class="pricing-desc">智能考勤助手 - 完整版</div>
+                    <div class="pricing-price">
+                        <span class="pricing-currency">¥</span>
+                        <span class="pricing-amount">1</span>
+                        <span class="pricing-period">永久</span>
+                    </div>
+                    <div class="pricing-trial">🎁 免费试用3天</div>
+                </div>
+                <ul class="pricing-features">
+                    <li>一键上下班打卡</li>
+                    <li>AI智能助手</li>
+                    <li>月度/年度报告</li>
+                    <li>日历视图 + 农历</li>
+                    <li>智能提醒通知</li>
+                    <li>数据导出 Excel/CSV</li>
+                    <li>补卡/请假/加班管理</li>
+                    <li>数据备份与恢复</li>
+                    <li>桌面小组件</li>
+                    <li>永久免费更新</li>
+                </ul>
+                <a href="#download" class="pricing-btn">立即下载，免费试用</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Testimonials Section ==================== -->
+    <section class="testimonials" id="testimonials">
+        <div class="testimonials-container">
+            <div class="section-header fade-in">
+                <div class="section-tag">用户评价</div>
+                <h2 class="section-title">听听用户怎么说</h2>
+                <p class="section-desc">来自真实用户的使用反馈</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card fade-in fade-in-delay-1">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"界面非常简洁好看，打卡再也不用打开那个难用的公司系统了。AI助手功能很惊喜，能直接告诉我这个月的考勤情况。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">张</div>
+                        <div>
+                            <div class="testimonial-name">张同学</div>
+                            <div class="testimonial-role">产品经理</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in fade-in-delay-2">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"补卡功能太实用了！以前补卡要填一堆表格，现在在日历上点一下就行。而且能导出Excel，月底汇报超方便。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">李</div>
+                        <div>
+                            <div class="testimonial-name">李同学</div>
+                            <div class="testimonial-role">前端工程师</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in fade-in-delay-3">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"1块钱买断，没有广告，没有订阅，这才是真正的良心软件。桌面小组件也很实用，不用打开APP就能看到状态。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">王</div>
+                        <div>
+                            <div class="testimonial-name">王同学</div>
+                            <div class="testimonial-role">设计师</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FAQ Section ==================== -->
+    <section class="faq" id="faq">
+        <div class="faq-container">
+            <div class="section-header fade-in">
+                <div class="section-tag">常见问题</div>
+                <h2 class="section-title">你可能想知道的</h2>
+                <p class="section-desc">如有其他问题，欢迎联系我们</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item fade-in">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>免费试用期是多久？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">下载后即可免费试用3天，所有功能完全开放，无任何限制。试用期结束后，只需支付1元即可永久使用。</div>
+                    </div>
+                </div>
+                <div class="faq-item fade-in">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>数据安全吗？会上传到服务器吗？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">所有数据均存储在您的手机本地，不会上传到任何服务器。我们还提供备份功能，您可以随时导出数据进行备份。</div>
+                    </div>
+                </div>
+                <div class="faq-item fade-in">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>支持哪些手机系统？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">目前支持Android系统，iOS版本正在开发中。Android 6.0及以上版本均可使用。</div>
+                    </div>
+                </div>
+                <div class="faq-item fade-in">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>AI助手需要联网吗？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">AI助手功能需要联网使用，它会分析您的考勤数据并提供智能建议。基础打卡功能完全离线可用。</div>
+                    </div>
+                </div>
+                <div class="faq-item fade-in">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>如何导出考勤数据？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">在设置页面点击"导出打卡记录"，支持Excel、CSV、文本三种格式，可以按月导出，方便您进行汇报或存档。</div>
+                    </div>
+                </div>
+                <div class="faq-item fade-in">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>购买后还能退款吗？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">我们提供3天免费试用，建议您在试用期内充分体验。由于数字产品的特殊性，购买后不支持退款，请您理解。</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Download Section ==================== -->
+    <section class="download" id="download">
+        <div class="download-container">
+            <h2 class="download-title fade-in">开始使用 MSN打卡</h2>
+            <p class="download-desc fade-in">下载即用，3天免费试用，只需1元永久拥有</p>
+            <div class="download-buttons fade-in">
+                <a href="#" class="download-btn">
+                    <span class="download-btn-icon">🤖</span>
+                    <div class="download-btn-text">
+                        <div class="download-btn-label">下载 APK</div>
+                        <div>Android 安装包</div>
+                    </div>
+                </a>
+                <a href="#" class="download-btn">
+                    <span class="download-btn-icon">📧</span>
+                    <div class="download-btn-text">
+                        <div class="download-btn-label">联系我们</div>
+                        <div>反馈与建议</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <a href="#" class="footer-logo">
+                    <div class="footer-logo-icon">⏰</div>
+                    <span class="footer-logo-text">MSN打卡</span>
+                </a>
+                <div class="footer-links">
+                    <a href="#features">功能</a>
+                    <a href="#pricing">定价</a>
+                    <a href="#faq">帮助</a>
+                    <a href="#">隐私政策</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright">© 2026 MSN打卡. All rights reserved.</div>
+                <div class="footer-icp">Made with ❤️ for 打工人</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // FAQ toggle
+        function toggleFaq(element) {
+            const faqItem = element.parentElement;
+            const isActive = faqItem.classList.contains('active');
+
+            // Close all FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Open clicked item if it wasn't active
+            if (!isActive) {
+                faqItem.classList.add('active');
+            }
+        }
+
+        // Scroll animation observer
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Mobile menu (simple toggle)
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        mobileMenuBtn.addEventListener('click', () => {
+            // You can implement a full mobile menu here
+            alert('移动菜单功能开发中...');
+        });
+    </script>
+</body>
+</html>
